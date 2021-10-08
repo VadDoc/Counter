@@ -82,6 +82,7 @@ input {
     border-radius: 10px;
     box-sizing: border-box;
     text-align: center;
+    display: none;
 }
 
 input.error-input {
