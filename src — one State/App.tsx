@@ -1,31 +1,24 @@
-import React, {useReducer} from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import {Monitor} from "./Components/Monitor";
 import {Button} from "./Components/Button";
 import {Setter} from "./Components/Setter";
-import {
-  AddCountAC, ChangeMCIfNumberMoreSCAC, ChangeMCIfOthersAC,
-  ChangeSCIfNumberLessMCAC,
-  ChangeSCIfNumberLessZeroAC, ChangeSCIfOthersAC,
-  ResetCountAC, SetValuesAC,
-  StateReducer
-} from "./Reducers/StateReducer";
-
-export type StateType = {
-  startCount: number,
-  maxCount: number,
-  count: number,
-  error: boolean,
-  errorStartCount: boolean,
-  errorMaxCount: boolean,
-  disabledButtonSet: boolean
-}
 
 function App() {
+  type initStateType = {
+    startCount: number,
+    maxCount: number,
+    count: number,
+    error: boolean,
+    errorStartCount: boolean,
+    errorMaxCount: boolean,
+    disabledButtonSet: boolean
+  }
+
   const startCountLocalStorage = Number(localStorage.getItem('startCount'))
   const maxCountLocalStorage = Number(localStorage.getItem('maxCount'))
 
-  const initState: StateType = {
+  const initState: initStateType = {
     startCount: startCountLocalStorage,
     maxCount: maxCountLocalStorage,
     count: startCountLocalStorage,
@@ -34,34 +27,75 @@ function App() {
     errorMaxCount: false,
     disabledButtonSet: true
   }
-  const [state, dispatchState] = useReducer(StateReducer, initState);
+  const [state, setState] = useState(initState);
 
   const addCount = () => {
     if(state.count < state.maxCount) {
-      dispatchState(AddCountAC())
+      setState({...state, count: state.count + 1})
     }
   }
+
   const resetCount = () => {
-    dispatchState(ResetCountAC())
+    setState({...state, count: startCountLocalStorage})
   }
+
   const changeStartCount = (num: number) => {
     if (num < 0) {
-      dispatchState(ChangeSCIfNumberLessZeroAC(num))
+      setState({
+        ...state,
+        startCount: num,
+        errorStartCount: true,
+        disabledButtonSet: true,
+        error: true
+      })
     } else if (num < state.maxCount) {
-      dispatchState(ChangeSCIfNumberLessMCAC(num))
+      setState({
+        ...state,
+        startCount: num,
+        errorStartCount: false,
+        errorMaxCount: false,
+        disabledButtonSet: false,
+        error: false
+      })
     } else {
-      dispatchState(ChangeSCIfOthersAC(num))
+      setState({
+        ...state,
+        startCount: num,
+        errorStartCount: true,
+        errorMaxCount: true,
+        disabledButtonSet: true,
+        error: true
+      })
     }
   }
+
   const changeMaxCount = (num: number) => {
     if (num > state.startCount) {
-      dispatchState(ChangeMCIfNumberMoreSCAC(num))
+      setState({
+        ...state,
+        maxCount: num,
+        errorStartCount: false,
+        errorMaxCount: false,
+        disabledButtonSet: false,
+        error: false
+      })
     } else {
-      dispatchState(ChangeMCIfOthersAC(num))
+      setState({
+        ...state,
+        maxCount: num,
+        errorStartCount: true,
+        errorMaxCount: true,
+        disabledButtonSet: true,
+        error: true
+      })
     }
   }
   const setValues = () => {
-    dispatchState(SetValuesAC())
+    setState({
+      ...state,
+      count: startCountLocalStorage,
+      disabledButtonSet: true
+    })
     localStorage.setItem('startCount', state.startCount.toString())
     localStorage.setItem('maxCount', state.maxCount.toString())
   }
