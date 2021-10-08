@@ -1,6 +1,6 @@
 {
   "name": "exam1",
-  "homepage": "https://VadDoc.github.io/Todo-List",
+  "homepage": "https://VadDoc.github.io/Counter",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
